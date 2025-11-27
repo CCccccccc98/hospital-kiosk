@@ -1,163 +1,54 @@
-# 醫院報到系統 - 使用說明
+﻿#  醫院自動報到系統 (Hospital Kiosk)
 
-## 🚀 快速開始
+這是一個專為醫院設計的自助報到系統，整合了身分證掃描、掛號查詢與自動叫號功能。
 
-### 方式一：執行打包好的應用程式
+##  給面試官的執行指南 (How to Run)
 
-**面試官或展示使用**，不需要安裝 Node.js 或任何依賴：
+由於 GitHub 檔案大小限制，本儲存庫 **不包含** 醫院掛號系統.exe 執行檔。請依照以下步驟在您的電腦上執行或打包。
 
-1. 執行打包指令（開發者）：
-```bash
-npm run electron:build
-```
+### 1. 下載專案
+\\\ash
+git clone https://github.com/CCccccccc98/hospital-kiosk.git
+cd hospital-kiosk
+\\\
 
-2. 打包完成後，執行檔位於：
-```
-dist-electron\win-unpacked\醫院掛號系統.exe
-```
+### 2. 安裝/修復依賴 (重要！)
+雖然專案已包含 
+ode_modules，但因為 electron.exe 被排除，**請務必執行此步驟**來修復執行環境：
+\\\ash
+npm install
+\\\
 
-3. 雙擊執行檔即可啟動，前端和後端會自動啟動
+### 3. 啟動開發模式 (Development Mode)
+如果您想直接查看執行效果：
+\\\ash
+npm run dev
+\\\
+這將會同時啟動後端伺服器與前端 Electron 視窗。
 
-> 詳細使用說明請參考 [面試官使用指南.md](./面試官使用指南.md)
+### 4. 打包成執行檔 (Build .exe)
+如果您想產生 醫院掛號系統.exe：
+\\\ash
+npm run build
+\\\
+完成後，執行檔將位於 \dist-electron/win-unpacked/醫院掛號系統.exe\。
 
 ---
 
-### 方式二：開發模式（需要 Node.js）
+##  系統功能
 
-**適合開發和測試**：
+- ** 身分證驗證**: 支援鍵盤輸入與條碼掃描模擬。
+- ** 門診掛號**: 選擇科別、醫師，並即時寫入資料庫。
+- ** 叫號系統**: 醫師端可進行叫號，大廳端同步顯示與語音播報。
+- ** 本地資料庫**: 使用 SQLite 儲存病患與掛號資訊，無需額外設定資料庫伺服器。
 
-#### 安裝依賴
-```bash
-npm install
-```
+##  技術架構
 
-### 1. 安裝後端依賴
-```bash
-cd server
-npm install
-```
+- **Frontend**: React 18, Vite, TailwindCSS
+- **Backend**: Express.js, SQLite3
+- **Desktop**: Electron
+- **Tooling**: Concurrently (同時啟動前後端)
 
-### 2. 啟動後端伺服器
-```bash
-cd server
-npm start
-```
-伺服器將在 `http://localhost:3001` 啟動
+##  專案預覽
 
-### 3. 啟動前端 (新終端)
-```bash
-npm run dev
-```
-前端將在 `http://localhost:5173` 啟動
-
-## 📋 測試用資料
-
-### 有效的身分證字號 (已在資料庫中)
-- `A123456789` - 陳小美
-- `B234567890` - 林志豪
-- `C345678901` - 張雅婷
-- `D456789012` - 王大明
-- `E567890123` - 李國華
-
-### 診間資訊
-系統預設有 6 個診間：
-- 內科一診 - 李大衛 醫師
-- 內科二診 - 陳淑芬 醫師
-- 外科一診 - 王建國 醫師
-- 外科二診 - 林美玲 醫師
-- 兒科一診 - 張小寶 醫師
-- 眼科一診 - 劉光明 醫師
-
-## 🔧 API 端點
-
-- `GET /api/clinics` - 取得所有診間資訊
-- `GET /api/patients/:id` - 查詢患者資料
-- `POST /api/checkin` - 執行報到
-- `POST /api/call-next` - 叫號
-- `GET /api/logs` - 查看操作日誌
-- `GET /health` - 健康檢查
-
-## ✨ 主要改進
-
-### P0 - 已完成
-✅ **後端 API 系統**
-- Express.js + SQLite 資料庫
-- RESTful API 設計
-- 資料持久化
-
-✅ **身分證驗證**
-- 完整的台灣身分證檢查碼演算法
-- 格式驗證
-
-✅ **號碼牌邏輯修正**
-- 資料庫自增序列
-- 確保號碼唯一性
-
-### P1 - 已完成
-✅ **錯誤處理**
-- API 錯誤處理
-- React 錯誤邊界
-- 用戶友善錯誤訊息
-
-✅ **操作日誌**
-- 報到記錄
-- 叫號記錄
-- 時間戳記
-
-## 🎯 測試流程
-
-### 1. 患者報到
-1. 進入「患者報到」
-2. 輸入身分證字號 (例如: A123456789)
-3. 選擇診間
-4. 確認報到
-5. 取得號碼牌
-
-### 2. 醫師叫號
-1. 進入「醫師控制台」
-2. 選擇診間
-3. 點擊「叫號」
-4. 號碼遞增，候診人數減少
-
-### 3. 查看進度
-1. 進入「即時看診進度」
-2. 查看所有診間的當前號碼和候診人數
-
-## 🔒 安全性改進
-
-- ✅ 身分證格式驗證
-- ✅ 重複報到檢查
-- ✅ 診間人數上限
-- ✅ API 錯誤處理
-- ⚠️ 待加入：醫師權限驗證
-
-## 📊 資料庫結構
-
-### patients (患者)
-- id (身分證字號)
-- name (姓名)
-- phone (電話)
-
-### clinics (診間)
-- id
-- name (醫師姓名)
-- dept (科別)
-- current (當前號碼)
-- waiting (候診人數)
-- last_ticket (最後號碼)
-
-### checkin_records (報到記錄)
-- patient_id
-- clinic_id
-- ticket_number
-- status
-- created_at
-- called_at
-
-### operation_logs (操作日誌)
-- action
-- clinic_id
-- patient_id
-- ticket_number
-- details
-- created_at
+(此處可自行新增截圖)
