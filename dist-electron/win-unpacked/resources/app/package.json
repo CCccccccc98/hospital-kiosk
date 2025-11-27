@@ -1,0 +1,18 @@
+{
+  "name": "hospital-kiosk",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "main": "electron.cjs",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "html5-qrcode": "^2.3.8",
+    "lowdb": "^7.0.1",
+    "lucide-react": "^0.292.0",
+    "qrcode": "^1.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.0"
+  }
+}

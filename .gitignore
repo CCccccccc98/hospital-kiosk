@@ -1,10 +1,19 @@
-﻿# 依賴套件
-node_modules/
+﻿#  允許上傳 node_modules 和 dist-electron (使用者要求)
+# node_modules/
+# dist-electron/
+
+#  排除超過 100MB 的檔案 (GitHub 限制)
+*.exe
+*.zip
+*.7z
+*.tar
+*.rar
+
+# 依賴套件
 package-lock.json
 
 # 建置產物
 dist/
-dist-electron/
 out/
 build/
 
@@ -36,7 +45,7 @@ yarn-error.log*
 *.temp
 .cache/
 
-# SQLite 資料庫（如果不想上傳資料）
+# SQLite 資料庫
 *.db
 *.sqlite
 *.sqlite3

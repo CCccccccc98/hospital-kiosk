@@ -1,0 +1,132 @@
+{
+  "patients": [
+    {
+      "id": "A123456789",
+      "name": "陳小美",
+      "phone": "0912345678",
+      "created_at": "2025-11-26T04:31:14.014Z"
+    },
+    {
+      "id": "B234567890",
+      "name": "林志豪",
+      "phone": "0923456789",
+      "created_at": "2025-11-26T04:31:14.016Z"
+    },
+    {
+      "id": "C345678901",
+      "name": "張雅婷",
+      "phone": "0934567890",
+      "created_at": "2025-11-26T04:31:14.016Z"
+    },
+    {
+      "id": "D456789012",
+      "name": "王大明",
+      "phone": "0945678901",
+      "created_at": "2025-11-26T04:31:14.016Z"
+    },
+    {
+      "id": "E567890123",
+      "name": "李國華",
+      "phone": "0956789012",
+      "created_at": "2025-11-26T04:31:14.016Z"
+    }
+  ],
+  "clinics": [
+    {
+      "id": 1,
+      "name": "李大衛 醫師",
+      "dept": "內科一診",
+      "current": 14,
+      "waiting": 1,
+      "last_ticket": 15
+    },
+    {
+      "id": 2,
+      "name": "陳淑芬 醫師",
+      "dept": "內科二診",
+      "current": 11,
+      "waiting": 2,
+      "last_ticket": 13
+    },
+    {
+      "id": 3,
+      "name": "王建國 醫師",
+      "dept": "外科一診",
+      "current": 25,
+      "waiting": 1,
+      "last_ticket": 26
+    },
+    {
+      "id": 4,
+      "name": "林美玲 醫師",
+      "dept": "外科二診",
+      "current": 18,
+      "waiting": 4,
+      "last_ticket": 22
+    },
+    {
+      "id": 5,
+      "name": "張小寶 醫師",
+      "dept": "兒科一診",
+      "current": 5,
+      "waiting": 8,
+      "last_ticket": 13
+    },
+    {
+      "id": 6,
+      "name": "劉光明 醫師",
+      "dept": "眼科一診",
+      "current": 30,
+      "waiting": 2,
+      "last_ticket": 32
+    }
+  ],
+  "checkinRecords": [],
+  "operationLogs": [
+    {
+      "id": 1,
+      "action": "CALL_NEXT",
+      "clinic_id": 2,
+      "patient_id": null,
+      "ticket_number": 9,
+      "details": "Called number 9 in 內科二診",
+      "created_at": "2025-11-27T05:25:14.750Z"
+    },
+    {
+      "id": 2,
+      "action": "CALL_NEXT",
+      "clinic_id": 2,
+      "patient_id": null,
+      "ticket_number": 10,
+      "details": "Called number 10 in 內科二診",
+      "created_at": "2025-11-27T05:25:14.849Z"
+    },
+    {
+      "id": 3,
+      "action": "CALL_NEXT",
+      "clinic_id": 2,
+      "patient_id": null,
+      "ticket_number": 11,
+      "details": "Called number 11 in 內科二診",
+      "created_at": "2025-11-27T05:25:15.455Z"
+    },
+    {
+      "id": 4,
+      "action": "CALL_NEXT",
+      "clinic_id": 1,
+      "patient_id": null,
+      "ticket_number": 13,
+      "details": "Called number 13 in 內科一診",
+      "created_at": "2025-11-27T06:21:33.356Z"
+    },
+    {
+      "id": 5,
+      "action": "CALL_NEXT",
+      "clinic_id": 1,
+      "patient_id": null,
+      "ticket_number": 14,
+      "details": "Called number 14 in 內科一診",
+      "created_at": "2025-11-27T06:21:33.642Z"
+    }
+  ]
+}
