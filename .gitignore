@@ -1,19 +1,10 @@
-﻿#  允許上傳 node_modules 和 dist-electron (使用者要求)
-# node_modules/
-# dist-electron/
-
-#  排除超過 100MB 的檔案 (GitHub 限制)
-*.exe
-*.zip
-*.7z
-*.tar
-*.rar
-
-# 依賴套件
+﻿# 依賴套件
+node_modules/
 package-lock.json
 
 # 建置產物
 dist/
+dist-electron/
 out/
 build/
 
