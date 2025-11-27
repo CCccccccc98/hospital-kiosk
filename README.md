@@ -7,7 +7,7 @@
 如果您只想觀看作品展示，請直接下載執行檔：
 
 1. 前往 **[Releases 頁面](../../releases)** (請點擊右側的 Releases)
-2. 下載最新版本的 \醫院掛號系統.exe\
+2. 下載最新版本的 `醫院掛號系統.exe`
 3. 雙擊即可執行 (無需安裝任何環境)
 
 ---
@@ -17,20 +17,20 @@
 如果您想查看原始碼或進行開發：
 
 ### 1. 下載專案
-\\\ash
+```bash
 git clone https://github.com/CCccccccc98/hospital-kiosk.git
 cd hospital-kiosk
-\\\
+```
 
 ### 2. 安裝依賴
-\\\ash
+```bash
 npm install
-\\\
+```
 
 ### 3. 啟動開發模式
-\\\ash
+```bash
 npm run dev
-\\\
+```
 
 ##  系統功能
 
