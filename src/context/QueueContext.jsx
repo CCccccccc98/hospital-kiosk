@@ -116,7 +116,7 @@ export const QueueProvider = ({ children }) => {
             if (err instanceof APIError) {
                 throw err;
             }
-            throw new Error('?��?失�?，�?稍�??�試');
+            throw new Error('叫號失敗，請稍後再試');
         }
     };
 
@@ -149,7 +149,7 @@ export const QueueProvider = ({ children }) => {
                         <div style={{
                             fontSize: '2rem', color: 'var(--primary-color)', fontWeight: 'bold', marginBottom: '1rem'
                         }}>
-                            請即?�就�?
+                            è«‹å³?»å°±è¨?
                         </div>
                         <h2 style={{ fontSize: '3rem', margin: '1rem 0' }}>{callingAlert.dept}</h2>
                         <div style={{
@@ -159,14 +159,14 @@ export const QueueProvider = ({ children }) => {
                             {callingAlert.number}
                         </div>
                         <p style={{ fontSize: '1.5rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                            請�?往診�??�到
+                            è«‹å?å¾€è¨ºé??±åˆ°
                         </p>
                         <button
                             className="btn btn-primary"
                             style={{ fontSize: '1.5rem', padding: '1rem 3rem', width: '100%', border: 'none', borderRadius: '1rem', background: 'var(--primary-color)', color: 'white', cursor: 'pointer' }}
                             onClick={closeAlert}
                         >
-                            ?�知?��?
+                            ?‘çŸ¥?“ä?
                         </button>
                     </div>
                 </div>
