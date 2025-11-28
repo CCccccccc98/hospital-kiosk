@@ -10,27 +10,19 @@ export const QueueProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Fetch clinics from backend
-    // Fetch clinics from backend
-const fetchClinics = async () => {
-    try {
-        const data = await clinicAPI.getAll();
-        // 確保資料是陣列
-        if (Array.isArray(data)) {
+    const fetchClinics = async () => {
+        try {
+            const data = await clinicAPI.getAll();
             setClinics(data);
             setError(null);
-        } else {
-            console.error('Invalid data format:', data);
-            setClinics([]);
-            setError('資料格式錯誤');
+        } catch (err) {
+            console.error('Failed to fetch clinics:', err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
-    } catch (err) {
-        console.error('Failed to fetch clinics:', err);
-        setError(err.message);
-        setClinics([]);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
+
     // Initial fetch
     useEffect(() => {
         fetchClinics();
@@ -96,9 +88,11 @@ const fetchClinics = async () => {
 
     // Watch for current number changes
     useEffect(() => {
-        Array.isArray(clinics) && clinics.forEach(clinic => {
-            checkCallingAlert(clinic.id, clinic.current);
-        });
+        if (Array.isArray(clinics) && clinics.length > 0) {
+            clinics.forEach(clinic => {
+                checkCallingAlert(clinic.id, clinic.current);
+            });
+        }
     }, [clinics]);
 
     // Action: Doctor Calls Next Patient
@@ -157,7 +151,7 @@ const fetchClinics = async () => {
                         <div style={{
                             fontSize: '2rem', color: 'var(--primary-color)', fontWeight: 'bold', marginBottom: '1rem'
                         }}>
-                            è«‹å³?»å°±è¨?
+                            請即刻就診
                         </div>
                         <h2 style={{ fontSize: '3rem', margin: '1rem 0' }}>{callingAlert.dept}</h2>
                         <div style={{
@@ -167,14 +161,14 @@ const fetchClinics = async () => {
                             {callingAlert.number}
                         </div>
                         <p style={{ fontSize: '1.5rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
-                            è«‹å?å¾€è¨ºé??±åˆ°
+                            請前往診療室報到
                         </p>
                         <button
                             className="btn btn-primary"
                             style={{ fontSize: '1.5rem', padding: '1rem 3rem', width: '100%', border: 'none', borderRadius: '1rem', background: 'var(--primary-color)', color: 'white', cursor: 'pointer' }}
                             onClick={closeAlert}
                         >
-                            ?‘çŸ¥?“ä?
+                            已知悉
                         </button>
                     </div>
                 </div>
