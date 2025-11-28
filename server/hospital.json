@@ -36,8 +36,8 @@
       "id": 1,
       "name": "李大衛 醫師",
       "dept": "內科一診",
-      "current": 12,
-      "waiting": 3,
+      "current": 13,
+      "waiting": 2,
       "last_ticket": 15
     },
     {
@@ -82,5 +82,15 @@
     }
   ],
   "checkinRecords": [],
-  "operationLogs": []
+  "operationLogs": [
+    {
+      "id": 1,
+      "action": "CALL_NEXT",
+      "clinic_id": 1,
+      "patient_id": null,
+      "ticket_number": 13,
+      "details": "Called number 13 in 內科一診",
+      "created_at": "2025-11-28T08:31:34.330Z"
+    }
+  ]
 }

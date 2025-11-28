@@ -15,9 +15,9 @@ initDatabase();
 // ============ API Routes ============
 
 // Get all clinics
-app.get('/api/clinics', (req, res) => {
+app.get('/api/clinics', async (req, res) => {
     try {
-        const clinics = clinicDB.getAll();
+        const clinics = await clinicDB.getAll();
         res.json(clinics);
     } catch (error) {
         console.error('Error fetching clinics:', error);
@@ -26,10 +26,10 @@ app.get('/api/clinics', (req, res) => {
 });
 
 // Get patient by ID
-app.get('/api/patients/:id', (req, res) => {
+app.get('/api/patients/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const patient = patientDB.getById(id);
+        const patient = await patientDB.getById(id);
 
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
@@ -43,7 +43,7 @@ app.get('/api/patients/:id', (req, res) => {
 });
 
 // Check-in endpoint
-app.post('/api/checkin', (req, res) => {
+app.post('/api/checkin', async (req, res) => {
     try {
         const { patientId, clinicId } = req.body;
 
@@ -53,19 +53,19 @@ app.post('/api/checkin', (req, res) => {
         }
 
         // Check if patient exists
-        const patient = patientDB.getById(patientId);
+        const patient = await patientDB.getById(patientId);
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
 
         // Check if clinic exists
-        const clinic = clinicDB.getById(clinicId);
+        const clinic = await clinicDB.getById(clinicId);
         if (!clinic) {
             return res.status(404).json({ error: 'Clinic not found' });
         }
 
         // Check for duplicate check-in
-        if (checkinDB.hasActiveCheckin(patientId, clinicId)) {
+        if (await checkinDB.hasActiveCheckin(patientId, clinicId)) {
             return res.status(409).json({
                 error: 'DUPLICATE_CHECKIN',
                 message: '您已經報到過此診間了！'
@@ -81,16 +81,16 @@ app.post('/api/checkin', (req, res) => {
         }
 
         // Generate ticket number
-        const ticketNumber = clinicDB.getNextTicket(clinicId);
+        const ticketNumber = await clinicDB.getNextTicket(clinicId);
 
         // Create check-in record
-        checkinDB.create(patientId, clinicId, ticketNumber);
+        await checkinDB.create(patientId, clinicId, ticketNumber);
 
         // Update clinic waiting count
-        clinicDB.updateWaiting(clinicId, clinic.waiting + 1);
+        await clinicDB.updateWaiting(clinicId, clinic.waiting + 1);
 
         // Log the operation
-        logDB.create('CHECKIN', clinicId, patientId, ticketNumber,
+        await logDB.create('CHECKIN', clinicId, patientId, ticketNumber,
             `Patient ${patient.name} checked in to ${clinic.dept}`);
 
         res.json({
@@ -115,7 +115,7 @@ app.post('/api/checkin', (req, res) => {
 });
 
 // Call next patient
-app.post('/api/call-next', (req, res) => {
+app.post('/api/call-next', async (req, res) => {
     try {
         const { clinicId } = req.body;
 
@@ -123,7 +123,7 @@ app.post('/api/call-next', (req, res) => {
             return res.status(400).json({ error: 'Missing clinic ID' });
         }
 
-        const clinic = clinicDB.getById(clinicId);
+        const clinic = await clinicDB.getById(clinicId);
         if (!clinic) {
             return res.status(404).json({ error: 'Clinic not found' });
         }
@@ -133,13 +133,13 @@ app.post('/api/call-next', (req, res) => {
 
         // Update clinic status
         const newWaiting = Math.max(0, clinic.waiting - 1);
-        clinicDB.updateCurrent(clinicId, nextNumber, newWaiting);
+        await clinicDB.updateCurrent(clinicId, nextNumber, newWaiting);
 
         // Update check-in record status
-        checkinDB.updateStatus(clinicId, nextNumber, 'called');
+        await checkinDB.updateStatus(clinicId, nextNumber, 'called');
 
         // Log the operation
-        logDB.create('CALL_NEXT', clinicId, null, nextNumber,
+        await logDB.create('CALL_NEXT', clinicId, null, nextNumber,
             `Called number ${nextNumber} in ${clinic.dept}`);
 
         res.json({
@@ -160,10 +160,10 @@ app.post('/api/call-next', (req, res) => {
 });
 
 // Get operation logs
-app.get('/api/logs', (req, res) => {
+app.get('/api/logs', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 50;
-        const logs = logDB.getRecent(limit);
+        const logs = await logDB.getRecent(limit);
         res.json(logs);
     } catch (error) {
         console.error('Error fetching logs:', error);
@@ -172,10 +172,10 @@ app.get('/api/logs', (req, res) => {
 });
 
 // Get check-in records for a clinic
-app.get('/api/checkins/:clinicId', (req, res) => {
+app.get('/api/checkins/:clinicId', async (req, res) => {
     try {
         const { clinicId } = req.params;
-        const records = checkinDB.getByClinic(parseInt(clinicId));
+        const records = await checkinDB.getByClinic(parseInt(clinicId));
         res.json(records);
     } catch (error) {
         console.error('Error fetching check-in records:', error);
