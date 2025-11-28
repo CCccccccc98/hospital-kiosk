@@ -10,7 +10,10 @@ export const QueueProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Fetch clinics from backend
-    const fetchClinics = async () => {
+    // Fetch clinics from backend
+const fetchClinics = async () => {
+    try {
+        const data = await clinicAPI.getAll();
         // 確保資料是陣列
         if (Array.isArray(data)) {
             setClinics(data);
@@ -23,13 +26,11 @@ export const QueueProvider = ({ children }) => {
     } catch (err) {
         console.error('Failed to fetch clinics:', err);
         setError(err.message);
-        setClinics([]); // 發生錯誤時設為空陣列
+        setClinics([]);
     } finally {
         setLoading(false);
     }
 };
-
-
     // Initial fetch
     useEffect(() => {
         fetchClinics();
