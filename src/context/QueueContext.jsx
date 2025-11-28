@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
 import { clinicAPI, APIError } from '../services/api';
 
 const QueueContext = createContext();
@@ -10,7 +10,7 @@ export const QueueProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     // Fetch clinics from backend
-    const fetchClinics = async () => {
+    const fetchClinics = useCallback(async () => {
         try {
             const data = await clinicAPI.getAll();
             // 確保資料是陣列
@@ -29,12 +29,12 @@ export const QueueProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     // Initial fetch
     useEffect(() => {
         fetchClinics();
-    }, []);
+    }, [fetchClinics]);
 
     // Polling: refresh every 3 seconds
     useEffect(() => {
@@ -43,10 +43,10 @@ export const QueueProvider = ({ children }) => {
         }, 3000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [fetchClinics]);
 
     // Notification sound using Web Audio API
-    const playNotificationSound = () => {
+    const playNotificationSound = useCallback(() => {
         try {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -73,15 +73,15 @@ export const QueueProvider = ({ children }) => {
         } catch (error) {
             console.error('Audio playback failed:', error);
         }
-    };
+    }, []);
 
     // Check if calling alert should be shown
-    const checkCallingAlert = (clinicId, currentNumber) => {
+    const checkCallingAlert = useCallback((clinicId, currentNumber) => {
         const userTicketStr = localStorage.getItem('userTicket');
         if (userTicketStr) {
             try {
                 const userTicket = JSON.parse(userTicketStr);
-                const clinic = clinics.find(c => c.id === clinicId);
+                const clinic = clinics.find(c => c && c.id === clinicId);
 
                 if (clinic && userTicket.dept === clinic.dept && currentNumber === userTicket.number) {
                     playNotificationSound();
@@ -92,28 +92,44 @@ export const QueueProvider = ({ children }) => {
                 console.error('Error parsing user ticket:', err);
             }
         }
-    };
+    }, [clinics, playNotificationSound]);
 
     // Watch for current number changes
     useEffect(() => {
-        // 確保 clinics 是陣列且有內容
-        if (!Array.isArray(clinics) || clinics.length === 0) {
+        // 多重檢查確保 clinics 是陣列
+        if (!clinics) {
+            console.warn('clinics is null or undefined');
+            return;
+        }
+        
+        if (!Array.isArray(clinics)) {
+            console.error('clinics is not an array:', typeof clinics, clinics);
+            return;
+        }
+        
+        if (clinics.length === 0) {
             return;
         }
 
-        clinics.forEach(clinic => {
-            if (clinic && clinic.id && clinic.current) {
-                checkCallingAlert(clinic.id, clinic.current);
-            }
-        });
-    }, [clinics]);
+        try {
+            clinics.forEach(clinic => {
+                if (clinic && clinic.id && clinic.current !== undefined) {
+                    checkCallingAlert(clinic.id, clinic.current);
+                }
+            });
+        } catch (err) {
+            console.error('Error in checkCallingAlert loop:', err);
+        }
+    }, [clinics, checkCallingAlert]);
 
     // Action: Doctor Calls Next Patient
     const callNext = async (deptName) => {
         try {
-            const clinic = Array.isArray(clinics) 
-                ? clinics.find(c => c.dept === deptName)
-                : null;
+            if (!Array.isArray(clinics)) {
+                throw new Error('診間資料異常');
+            }
+
+            const clinic = clinics.find(c => c && c.dept === deptName);
             
             if (!clinic) {
                 throw new Error('找不到診間');
@@ -123,7 +139,10 @@ export const QueueProvider = ({ children }) => {
 
             // Update local state immediately for better UX
             setClinics(prev => {
-                if (!Array.isArray(prev)) return [];
+                if (!Array.isArray(prev)) {
+                    console.error('Previous clinics state is not an array');
+                    return [];
+                }
                 return prev.map(c =>
                     c.id === clinic.id
                         ? { ...c, current: result.current, waiting: result.waiting }
@@ -145,7 +164,7 @@ export const QueueProvider = ({ children }) => {
 
     return (
         <QueueContext.Provider value={{
-            clinics,
+            clinics: Array.isArray(clinics) ? clinics : [],
             callingAlert,
             closeAlert,
             callNext,
@@ -196,4 +215,10 @@ export const QueueProvider = ({ children }) => {
     );
 };
 
-export const useQueue = () => useContext(QueueContext);
+export const useQueue = () => {
+    const context = useContext(QueueContext);
+    if (!context) {
+        throw new Error('useQueue must be used within a QueueProvider');
+    }
+    return context;
+};
