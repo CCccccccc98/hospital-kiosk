@@ -11,17 +11,24 @@ export const QueueProvider = ({ children }) => {
 
     // Fetch clinics from backend
     const fetchClinics = async () => {
-        try {
-            const data = await clinicAPI.getAll();
+        // 確保資料是陣列
+        if (Array.isArray(data)) {
             setClinics(data);
             setError(null);
-        } catch (err) {
-            console.error('Failed to fetch clinics:', err);
-            setError(err.message);
-        } finally {
-            setLoading(false);
+        } else {
+            console.error('Invalid data format:', data);
+            setClinics([]);
+            setError('資料格式錯誤');
         }
-    };
+    } catch (err) {
+        console.error('Failed to fetch clinics:', err);
+        setError(err.message);
+        setClinics([]); // 發生錯誤時設為空陣列
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     // Initial fetch
     useEffect(() => {
