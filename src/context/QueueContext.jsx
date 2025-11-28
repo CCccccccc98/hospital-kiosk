@@ -13,11 +13,19 @@ export const QueueProvider = ({ children }) => {
     const fetchClinics = async () => {
         try {
             const data = await clinicAPI.getAll();
-            setClinics(data);
-            setError(null);
+            // 確保資料是陣列
+            if (Array.isArray(data)) {
+                setClinics(data);
+                setError(null);
+            } else {
+                console.error('Invalid data format:', data);
+                setClinics([]);
+                setError('資料格式錯誤');
+            }
         } catch (err) {
             console.error('Failed to fetch clinics:', err);
             setError(err.message);
+            setClinics([]); // 發生錯誤時設為空陣列
         } finally {
             setLoading(false);
         }
@@ -88,29 +96,40 @@ export const QueueProvider = ({ children }) => {
 
     // Watch for current number changes
     useEffect(() => {
-        if (Array.isArray(clinics) && clinics.length > 0) {
-            clinics.forEach(clinic => {
-                checkCallingAlert(clinic.id, clinic.current);
-            });
+        // 確保 clinics 是陣列且有內容
+        if (!Array.isArray(clinics) || clinics.length === 0) {
+            return;
         }
+
+        clinics.forEach(clinic => {
+            if (clinic && clinic.id && clinic.current) {
+                checkCallingAlert(clinic.id, clinic.current);
+            }
+        });
     }, [clinics]);
 
     // Action: Doctor Calls Next Patient
     const callNext = async (deptName) => {
         try {
-            const clinic = clinics.find(c => c.dept === deptName);
+            const clinic = Array.isArray(clinics) 
+                ? clinics.find(c => c.dept === deptName)
+                : null;
+            
             if (!clinic) {
-                throw new Error('Clinic not found');
+                throw new Error('找不到診間');
             }
 
             const result = await clinicAPI.callNext(clinic.id);
 
             // Update local state immediately for better UX
-            setClinics(prev => prev.map(c =>
-                c.id === clinic.id
-                    ? { ...c, current: result.current, waiting: result.waiting }
-                    : c
-            ));
+            setClinics(prev => {
+                if (!Array.isArray(prev)) return [];
+                return prev.map(c =>
+                    c.id === clinic.id
+                        ? { ...c, current: result.current, waiting: result.waiting }
+                        : c
+                );
+            });
 
             return { success: true };
         } catch (err) {
